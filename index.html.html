@@ -2,79 +2,140 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ActionBoard - Planos de Ação</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Vortex | Organização Premium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: Arial, sans-serif;
-            background: #0a0a2e;
-            color: white;
+            font-family: 'Inter', sans-serif;
+            background: #0A0A0A;
+            color: #E0E0E0;
             min-height: 100vh;
-            padding: 15px;
         }
-        .container { max-width: 1200px; margin: 0 auto; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
+        :root {
+            --bg-dark: #050505;
+            --bg-card: #0F0F0F;
+            --orange: #FF6D00;
+            --orange-light: #FF9800;
+            --pink: #E91E63;
+            --pink-light: #F06292;
+            --text-dim: #A0A0A0;
+            --border: #1F1F1F;
+        }
+
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #12123a;
-            padding: 12px 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            border: 1px solid gold;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        h1 { color: gold; font-size: 1.3rem; }
-        button {
-            background: #FF6D00;
-            border: none;
-            padding: 8px 14px;
+            background: var(--bg-card);
+            padding: 15px 25px;
             border-radius: 20px;
-            color: white;
-            cursor: pointer;
-            margin-left: 8px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
         }
-        .btn-outline { background: transparent; border: 1px solid gold; color: gold; }
-        .btn-danger { background: transparent; border: 1px solid #ff3b30; color: #ff3b30; }
-        .stats { display: flex; gap: 12px; margin-bottom: 15px; flex-wrap: wrap; }
-        .stat { background: #12123a; padding: 6px 16px; border-radius: 15px; border: 1px solid #333; font-size: 0.85rem; }
-        .plans-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; margin-top: 20px; }
-        .plan-card { background: #12123a; border-radius: 15px; padding: 15px; border: 1px solid #333; cursor: pointer; transition: 0.2s; }
-        .plan-card:hover { border-color: gold; }
-        .plan-card.completed { border-color: #4CAF50; }
-        .plan-icon { font-size: 2rem; margin-bottom: 8px; }
-        .plan-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 5px; }
-        .plan-date { font-size: 0.65rem; color: #aaa; margin-bottom: 8px; }
-        .progress-bar { height: 5px; background: #333; border-radius: 4px; margin: 10px 0; overflow: hidden; }
-        .progress-fill { height: 100%; background: #FF6D00; border-radius: 4px; }
-        .plan-card.completed .progress-fill { background: #4CAF50; }
-        .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 10px; border-top: 1px solid #333; flex-wrap: wrap; gap: 8px; }
-        .status { font-size: 0.65rem; padding: 3px 8px; border-radius: 12px; }
-        .status-active { background: #4CAF5033; color: #4CAF50; }
-        .status-completed { background: #4CAF5033; color: #4CAF50; }
-        .btn-small { padding: 4px 10px; font-size: 0.7rem; }
+        .logo h1 {
+            background: linear-gradient(135deg, var(--orange), var(--pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-size: 1.8rem;
+        }
+        .logo span { font-size: 0.7rem; color: var(--text-dim); margin-left: 8px; }
+        button {
+            background: linear-gradient(135deg, var(--orange), var(--pink));
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            color: #0A0A0A;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--orange);
+            color: var(--orange);
+        }
+        .btn-danger {
+            background: transparent;
+            border: 1px solid #FF3B30;
+            color: #FF3B30;
+        }
+
+        .neural-bg {
+            position: relative;
+            background: radial-gradient(circle at 20% 30%, rgba(255, 109, 0, 0.05) 0%, rgba(233, 30, 99, 0.05) 100%);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 109, 0, 0.2);
+        }
+        .neural-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.4;
+        }
+        .stats-grid {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .stat-card {
+            background: rgba(15, 15, 15, 0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255, 109, 0, 0.3);
+            transition: 0.2s;
+        }
+        .stat-card i { font-size: 2rem; background: linear-gradient(135deg, var(--orange), var(--pink)); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 10px; }
+        .stat-value { font-size: 2rem; font-weight: 800; margin-bottom: 5px; }
+        .stat-label { font-size: 0.8rem; color: var(--text-dim); }
+
+        .boards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; margin-top: 30px; }
+        .board-card { background: var(--bg-card); border-radius: 20px; padding: 25px; border: 1px solid var(--border); cursor: pointer; transition: all 0.3s; }
+        .board-card:hover { transform: translateY(-5px); border-color: var(--orange); box-shadow: 0 0 20px rgba(255, 109, 0, 0.1); }
+        .board-icon { font-size: 2.5rem; margin-bottom: 15px; }
+        .board-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 5px; }
+        .board-info { font-size: 0.7rem; color: var(--text-dim); }
+        .board-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 15px; }
+
+        .board-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0A0A0A; z-index: 1000; overflow-y: auto; padding: 20px; }
+        .board-screen.active { display: block; }
+        .board-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; background: var(--bg-card); padding: 15px 25px; border-radius: 20px; }
+        .kanban-board { display: flex; gap: 20px; overflow-x: auto; align-items: flex-start; }
+        .list { background: #111; border-radius: 16px; width: 320px; min-width: 320px; border: 1px solid #222; display: flex; flex-direction: column; max-height: 70vh; }
+        .list-header { padding: 15px; background: #1A1A1A; border-radius: 16px 16px 0 0; display: flex; justify-content: space-between; }
+        .list-title input { background: transparent; border: none; color: white; font-weight: bold; width: 150px; }
+        .delete-list { background: none; border: none; color: #FF3B30; cursor: pointer; }
+        .cards-container { flex: 1; padding: 10px; overflow-y: auto; min-height: 200px; }
+        .card { background: #1A1A1A; border-radius: 12px; padding: 12px; margin-bottom: 10px; border: 1px solid #333; cursor: grab; transition: 0.2s; }
+        .card:hover { border-color: var(--orange); }
+        .card-title { font-weight: 500; cursor: pointer; margin-bottom: 8px; }
+        .add-card, .add-list { background: none; border: 1px dashed #444; border-radius: 12px; padding: 10px; width: 100%; text-align: center; cursor: pointer; color: #888; margin-top: 8px; }
         
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: #12123a; padding: 20px; border-radius: 20px; width: 90%; max-width: 500px; max-height: 85vh; overflow-y: auto; border: 1px solid gold; }
-        .modal-content h2 { color: gold; margin-bottom: 15px; font-size: 1.2rem; }
-        input, textarea { width: 100%; padding: 8px; margin: 6px 0; background: #0a0a2e; border: 1px solid #333; border-radius: 10px; color: white; }
-        .icon-selector { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; padding: 10px; background: #0a0a2e; border-radius: 12px; }
-        .icon-option { width: 45px; height: 45px; background: #1a1a4e; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid transparent; font-size: 1.3rem; }
-        .icon-option.selected { border-color: gold; background: #FFD70020; }
-        .task-item { background: #0a0a2e; padding: 8px; margin: 5px 0; border-radius: 8px; display: flex; align-items: center; gap: 8px; }
-        .task-item input { width: 18px; margin: 0; }
-        .task-item span { flex: 1; font-size: 0.85rem; }
-        .add-btn { background: none; border: 1px dashed #666; padding: 8px; width: 100%; cursor: pointer; color: #aaa; margin-top: 8px; border-radius: 8px; }
-        .delete-btn { background: none; border: none; color: #ff3b30; cursor: pointer; }
-        .empty { text-align: center; padding: 40px; color: #888; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; z-index: 1100; }
+        .modal-content { background: #111; padding: 25px; border-radius: 20px; width: 500px; max-width: 90%; border: 1px solid var(--orange); }
+        .modal-content input, .modal-content textarea { width: 100%; padding: 10px; margin: 10px 0; background: #0A0A0A; border: 1px solid #333; border-radius: 10px; color: white; }
+        .checklist-item { background: #0A0A0A; border-radius: 10px; padding: 10px; margin: 8px 0; display: flex; align-items: center; gap: 10px; }
+        .checklist-item.completed span { text-decoration: line-through; color: #888; }
+        .close-modal { float: right; background: none; border: none; color: var(--orange); font-size: 1.5rem; cursor: pointer; }
         
-        .login-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .login-card { background: #12123a; padding: 30px; border-radius: 25px; width: 320px; text-align: center; border: 1px solid gold; }
-        .login-card input { width: 100%; padding: 10px; margin: 8px 0; border-radius: 25px; }
-        .login-card button { width: 100%; margin-top: 10px; }
-        .switch-auth { margin-top: 12px; color: gold; cursor: pointer; font-size: 0.8rem; }
+        .login-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .login-card { background: #111; padding: 40px; border-radius: 25px; width: 380px; text-align: center; border: 1px solid var(--orange); }
+        .login-card input { width: 100%; padding: 12px; margin: 12px 0; background: #0A0A0A; border: 1px solid #333; border-radius: 25px; color: white; }
+        .switch-auth { margin-top: 15px; color: var(--orange); cursor: pointer; }
     </style>
 </head>
 <body>
@@ -83,232 +144,284 @@
 <script type="module">
     // ========== FIREBASE CONFIG (SUAS CONFIGURAÇÕES) ==========
     const firebaseConfig = {
-        apiKey: "AIzaSyC5dp5_7mEuwHFnZEGCohDBm2K2ayhtl9k",
-        authDomain: "actionboard-app-d34e9.firebaseapp.com",
-        projectId: "actionboard-app-d34e9",
-        storageBucket: "actionboard-app-d34e9.firebasestorage.app",
-        messagingSenderId: "851859475972",
-        appId: "1:851859475972:web:88b9869f0dbdd162d16f51"
+        apiKey: "AIzaSyBjEnH3wgbY4JomVcpNegkWnXtwmfLldwM",
+        authDomain: "vortex-premium.firebaseapp.com",
+        projectId: "vortex-premium",
+        storageBucket: "vortex-premium.firebasestorage.app",
+        messagingSenderId: "424994562061",
+        appId: "1:424994562061:web:985ceb03716f533903f544"
     };
-    // ===========================================================
+    // ============================================================
     
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
     import { getFirestore, collection, doc, getDocs, setDoc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
     
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+    const appFirebase = initializeApp(firebaseConfig);
+    const auth = getAuth(appFirebase);
+    const db = getFirestore(appFirebase);
     
     let currentUser = null;
-    let plans = [];
-    const iconsList = ["🎯", "📚", "💼", "🏋️", "💰", "🚗", "🏠", "❤️", "✈️", "🎓", "🐕", "🎨", "🍳", "🎵", "📷", "🌱", "💪", "🧘", "🏃", "🚴"];
+    let boards = { boards: [] };
+    let currentBoardId = null;
     
-    async function loadPlansFromFirebase() {
+    async function loadUserBoards() {
         if (!currentUser) return;
         try {
-            const q = query(collection(db, "planos"), where("userId", "==", currentUser.uid));
+            const q = query(collection(db, "boards"), where("userId", "==", currentUser.uid));
             const querySnapshot = await getDocs(q);
-            plans = [];
-            querySnapshot.forEach((doc) => { plans.push({ id: doc.id, ...doc.data() }); });
-            renderApp();
-        } catch (error) { console.error("Erro:", error); }
-    }
-    
-    async function savePlanToFirebase(plan) {
-        if (!currentUser) return;
-        try {
-            const planRef = doc(db, "planos", plan.id);
-            await setDoc(planRef, { userId: currentUser.uid, name: plan.name, description: plan.description, endDate: plan.endDate, icon: plan.icon, steps: plan.steps, completed: plan.completed });
-        } catch (error) { console.error("Erro:", error); }
-    }
-    
-    async function deletePlanFromFirebase(planId) {
-        if (!currentUser) return;
-        try { await deleteDoc(doc(db, "planos", planId)); } catch (error) { console.error("Erro:", error); }
-    }
-    
-    async function addPlan(plan) { plan.id = Date.now().toString(); plans.push(plan); await savePlanToFirebase(plan); renderApp(); }
-    async function updatePlan(plan) { const index = plans.findIndex(p => p.id === plan.id); if (index !== -1) plans[index] = plan; await savePlanToFirebase(plan); renderApp(); }
-    async function deletePlan(id) { if (confirm('Excluir este plano?')) { plans = plans.filter(p => p.id !== id); await deletePlanFromFirebase(id); renderApp(); } }
-    async function toggleComplete(id) { const p = plans.find(p => p.id === id); if (p) { p.completed = !p.completed; await savePlanToFirebase(p); renderApp(); } }
-    
-    function getProgress(p) {
-        if (p.completed) return 100;
-        let total = 0, done = 0;
-        if (p.steps) { p.steps.forEach(s => { if (s.tasks) { s.tasks.forEach(t => { total++; if (t.completed) done++; }); } }); }
-        return total === 0 ? 0 : (done / total) * 100;
-    }
-    
-    function renderApp() {
-        let completedCount = plans.filter(p => p.completed).length;
-        document.getElementById('app').innerHTML = `
-            <div class="container">
-                <div class="header"><h1>🎯 ActionBoard</h1><div><button id="newPlanBtn">+ Novo Plano</button><button id="configBtn" class="btn-outline">⚙️</button><button id="logoutBtn" class="btn-outline">Sair</button></div></div>
-                <div class="stats"><div class="stat">📋 ${plans.length} Planos</div><div class="stat">✅ ${completedCount} Concluídos</div></div>
-                <div id="plansGrid" class="plans-grid"></div>
-            </div>
-            <div id="planModal" class="modal"><div class="modal-content"><h2>📌 Novo Plano</h2>
-                <input type="text" id="planName" placeholder="Nome do plano"><textarea id="planDesc" rows="2" placeholder="Descrição"></textarea>
-                <input type="date" id="planEndDate"><label>Escolha um ícone:</label><div class="icon-selector" id="iconSelector"></div><input type="hidden" id="selectedIcon" value="🎯">
-                <div id="stepsEditor"></div><button id="addStepBtn" class="add-btn">+ Adicionar Etapa</button>
-                <div style="display:flex; gap:10px; margin-top:15px;"><button id="savePlanBtn">Salvar</button><button id="closeModalBtn" class="btn-outline">Cancelar</button></div>
-            </div></div>
-            <div id="detailModal" class="modal"><div class="modal-content"><div id="detailContent"></div><button id="closeDetailBtn" class="btn-outline">Fechar</button></div></div>
-            <div id="configModal" class="modal"><div class="modal-content"><h2>⚙️ Configurações</h2>
-                <input type="password" id="oldPass" placeholder="Senha atual"><input type="password" id="newPass" placeholder="Nova senha (6+)">
-                <input type="password" id="confirmPass" placeholder="Confirmar"><button id="changePassBtn">Alterar Senha</button>
-                <button id="resetBtn" style="background:#ff3b30;">Resetar Planos</button>
-                <button id="deleteAccBtn" style="background:transparent; border:1px solid #ff3b30; color:#ff3b30;">Excluir Conta</button>
-                <button id="closeConfigBtn" class="btn-outline">Fechar</button>
-            </div></div>
-        `;
-        
-        let selector = document.getElementById('iconSelector');
-        if (selector) {
-            selector.innerHTML = '';
-            iconsList.forEach(ic => {
-                let div = document.createElement('div');
-                div.className = `icon-option ${ic === '🎯' ? 'selected' : ''}`;
-                div.innerHTML = ic;
-                div.onclick = () => { document.querySelectorAll('.icon-option').forEach(el => el.classList.remove('selected')); div.classList.add('selected'); document.getElementById('selectedIcon').value = ic; };
-                selector.appendChild(div);
-            });
-        }
-        
-        let grid = document.getElementById('plansGrid');
-        if (plans.length === 0) { grid.innerHTML = '<div class="empty">📭 Nenhum plano criado</div>'; }
-        else {
-            grid.innerHTML = '';
-            plans.forEach(p => {
-                let prog = getProgress(p);
-                let icon = p.icon || '🎯';
-                let card = document.createElement('div');
-                card.className = `plan-card ${p.completed ? 'completed' : ''}`;
-                card.innerHTML = `<div class="plan-icon">${icon}</div><div class="plan-title">${p.name} ${p.completed ? '✅' : ''}</div>
-                    <div class="plan-date">📅 ${new Date(p.endDate).toLocaleDateString()}</div><div class="progress-bar"><div class="progress-fill" style="width:${prog}%"></div></div>
-                    <div>${Math.round(prog)}%</div><div class="card-footer"><span class="status status-${p.completed ? 'completed' : 'active'}">${p.completed ? 'Concluído' : 'Em andamento'}</span>
-                    <div style="display: flex; gap: 5px;">${!p.completed ? `<button class="btn-small" id="complete_${p.id}">✓ Concluir</button>` : ''}
-                    <button class="btn-small" id="detail_${p.id}">Detalhes</button><button class="btn-small btn-danger" id="delete_${p.id}">🗑️ Excluir</button></div></div>`;
-                grid.appendChild(card);
-                if (!p.completed) document.getElementById(`complete_${p.id}`)?.addEventListener('click', () => toggleComplete(p.id));
-                document.getElementById(`detail_${p.id}`)?.addEventListener('click', () => openDetail(p.id));
-                document.getElementById(`delete_${p.id}`)?.addEventListener('click', (e) => { e.stopPropagation(); deletePlan(p.id); });
-            });
-        }
-        
-        let currentSteps = [];
-        function renderStepsEditor() {
-            let div = document.getElementById('stepsEditor');
-            if (!div) return;
-            div.innerHTML = '';
-            currentSteps.forEach((s, i) => {
-                div.innerHTML += `<div style="display:flex; gap:5px; margin-bottom:5px;"><input type="text" value="${s.name.replace(/"/g, '&quot;')}" data-i="${i}" class="stepName" style="flex:1;" placeholder="Etapa"><button data-i="${i}" class="delStepBtn" style="background:#ff3b30; padding:6px 10px;">X</button></div>`;
-            });
-            document.querySelectorAll('.stepName').forEach(inp => { inp.onchange = (e) => { currentSteps[parseInt(e.target.dataset.i)].name = e.target.value; }; });
-            document.querySelectorAll('.delStepBtn').forEach(btn => { btn.onclick = () => { currentSteps.splice(parseInt(btn.dataset.i), 1); renderStepsEditor(); }; });
-        }
-        
-        let editingId = null;
-        document.getElementById('newPlanBtn').onclick = () => {
-            editingId = null;
-            document.getElementById('planName').value = '';
-            document.getElementById('planDesc').value = '';
-            document.getElementById('planEndDate').value = '';
-            document.getElementById('selectedIcon').value = '🎯';
-            document.querySelectorAll('.icon-option').forEach(el => el.classList.remove('selected'));
-            document.querySelector('.icon-option')?.classList.add('selected');
-            currentSteps = [];
-            renderStepsEditor();
-            document.getElementById('planModal').style.display = 'flex';
-        };
-        document.getElementById('closeModalBtn').onclick = () => document.getElementById('planModal').style.display = 'none';
-        document.getElementById('addStepBtn').onclick = () => { currentSteps.push({ name: 'Nova etapa', tasks: [] }); renderStepsEditor(); };
-        document.getElementById('savePlanBtn').onclick = async () => {
-            let name = document.getElementById('planName').value;
-            if (!name) { alert('Digite o nome do plano'); return; }
-            let endDate = document.getElementById('planEndDate').value;
-            if (!endDate) { alert('Selecione a data de término'); return; }
-            let icon = document.getElementById('selectedIcon').value;
-            if (editingId) {
-                let p = plans.find(pl => pl.id === editingId);
-                if (p) { p.name = name; p.description = document.getElementById('planDesc').value; p.endDate = endDate; p.icon = icon; p.steps = currentSteps; await updatePlan(p); }
-            } else { await addPlan({ id: Date.now().toString(), name: name, description: document.getElementById('planDesc').value, endDate: endDate, icon: icon, steps: currentSteps, completed: false }); }
-            document.getElementById('planModal').style.display = 'none';
-        };
-        
-        async function openDetail(id) {
-            let p = plans.find(pl => pl.id === id);
-            if (!p) return;
-            let prog = getProgress(p);
-            let html = `<div style="display:flex; gap:10px; align-items:center;"><div style="font-size:2rem;">${p.icon || '🎯'}</div><h2>${p.name}</h2></div>
-                <p>${p.description || ''}</p><p>📅 ${new Date(p.endDate).toLocaleDateString()}</p>
-                <div class="progress-bar"><div class="progress-fill" style="width:${prog}%"></div></div><h3>📋 Etapas e Tarefas</h3>`;
-            if (p.steps && p.steps.length) {
-                p.steps.forEach((step, si) => {
-                    html += `<div style="margin-bottom:15px; background:#0a0a2e; border-radius:10px; padding:10px;">
-                        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;"><input type="checkbox" ${step.completed ? 'checked' : ''} onchange="toggleStep(${id}, ${si})"><strong style="flex:1">${step.name}</strong>
-                        <button onclick="deleteStep(${id}, ${si})" style="background:#ff3b30; border:none; color:white; padding:4px 8px;">Excluir</button></div>`;
-                    if (step.tasks && step.tasks.length) {
-                        step.tasks.forEach((task, ti) => {
-                            html += `<div style="display:flex; align-items:center; gap:8px; margin-left:20px; padding:4px 0;"><input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask(${id}, ${si}, ${ti})"><span style="flex:1">${task.name}</span><button onclick="deleteTask(${id}, ${si}, ${ti})" style="background:none; border:none; color:#ff3b30;">X</button></div>`;
-                        });
-                    }
-                    html += `<button class="add-btn" onclick="addTaskTo(${id}, ${si})">+ Adicionar tarefa</button></div>`;
+            if (querySnapshot.empty) {
+                boards = { boards: [] };
+            } else {
+                boards = { boards: [] };
+                querySnapshot.forEach((doc) => {
+                    boards.boards.push({ id: doc.id, ...doc.data() });
                 });
             }
-            html += `<button class="add-btn" onclick="addStepTo(${id})">+ Adicionar etapa</button>`;
-            if (!p.completed) html += `<button id="completeFromDetail" style="margin-top:15px;">✓ Marcar plano como concluído</button>`;
-            document.getElementById('detailContent').innerHTML = html;
-            document.getElementById('detailModal').style.display = 'flex';
-            document.getElementById('completeFromDetail')?.addEventListener('click', () => { toggleComplete(id); document.getElementById('detailModal').style.display = 'none'; });
-        }
-        
-        window.toggleStep = async (pid, si) => { let p = plans.find(pl => pl.id === pid); if (p) { p.steps[si].completed = !p.steps[si].completed; await updatePlan(p); openDetail(pid); } };
-        window.toggleTask = async (pid, si, ti) => { let p = plans.find(pl => pl.id === pid); if (p) { p.steps[si].tasks[ti].completed = !p.steps[si].tasks[ti].completed; await updatePlan(p); openDetail(pid); } };
-        window.addStepTo = async (pid) => { let name = prompt('Nome da etapa:'); if (name) { let p = plans.find(pl => pl.id === pid); if (p) { if (!p.steps) p.steps = []; p.steps.push({ name: name, tasks: [], completed: false }); await updatePlan(p); openDetail(pid); } } };
-        window.deleteStep = async (pid, si) => { if (confirm('Excluir esta etapa?')) { let p = plans.find(pl => pl.id === pid); if (p) { p.steps.splice(si, 1); await updatePlan(p); openDetail(pid); } } };
-        window.deleteTask = async (pid, si, ti) => { if (confirm('Excluir esta tarefa?')) { let p = plans.find(pl => pl.id === pid); if (p) { p.steps[si].tasks.splice(ti, 1); await updatePlan(p); openDetail(pid); } } };
-        window.addTaskTo = async (pid, si) => { let name = prompt('Nome da tarefa:'); if (name) { let p = plans.find(pl => pl.id === pid); if (p) { if (!p.steps[si].tasks) p.steps[si].tasks = []; p.steps[si].tasks.push({ name: name, completed: false }); await updatePlan(p); openDetail(pid); } } };
-        
-        document.getElementById('closeDetailBtn').onclick = () => document.getElementById('detailModal').style.display = 'none';
-        document.getElementById('configBtn').onclick = () => document.getElementById('configModal').style.display = 'flex';
-        document.getElementById('closeConfigBtn').onclick = () => document.getElementById('configModal').style.display = 'none';
-        document.getElementById('logoutBtn').onclick = () => signOut(auth);
-        document.getElementById('changePassBtn').onclick = async () => {
-            let old = document.getElementById('oldPass').value;
-            let nw = document.getElementById('newPass').value;
-            let cf = document.getElementById('confirmPass').value;
-            if (nw !== cf) { alert('Senhas não conferem'); return; }
-            const user = auth.currentUser;
-            const credential = EmailAuthProvider.credential(user.email, old);
-            try { await reauthenticateWithCredential(user, credential); await updatePassword(user, nw); alert('Senha alterada!'); document.getElementById('configModal').style.display = 'none'; } catch(e) { alert('Senha atual incorreta'); }
-        };
-        document.getElementById('resetBtn').onclick = async () => { if (confirm('Apagar TODOS os planos?')) { for (const p of plans) await deletePlanFromFirebase(p.id); plans = []; renderApp(); alert('Planos apagados!'); } };
-        document.getElementById('deleteAccBtn').onclick = async () => { if (confirm('Excluir sua conta e todos os planos?')) { for (const p of plans) await deletePlanFromFirebase(p.id); await auth.currentUser.delete(); alert('Conta excluída!'); window.location.reload(); } };
+            renderDashboard();
+        } catch (error) { console.error("Erro:", error); }
     }
     
+    async function saveUserBoards() {
+        if (!currentUser) return;
+        for (const board of boards.boards) {
+            const boardRef = doc(db, "boards", board.id);
+            await setDoc(boardRef, {
+                userId: currentUser.uid,
+                name: board.name,
+                lists: board.lists
+            });
+        }
+    }
+    
+    async function deleteBoardFromFirebase(boardId) {
+        if (!currentUser) return;
+        await deleteDoc(doc(db, "boards", boardId));
+    }
+    
+    function changePasswordFirebase(oldPass, newPass) {
+        const user = auth.currentUser;
+        const credential = EmailAuthProvider.credential(user.email, oldPass);
+        return reauthenticateWithCredential(user, credential).then(() => {
+            return updatePassword(user, newPass);
+        });
+    }
+    
+    function deleteAccountFirebase() {
+        return auth.currentUser.delete();
+    }
+    
+    function createBoard(name) {
+        let newBoard = {
+            id: Date.now().toString(),
+            name: name,
+            lists: [
+                { id: '1', title: '📝 A Fazer', cards: [] },
+                { id: '2', title: '⚙️ Em Andamento', cards: [] },
+                { id: '3', title: '✅ Concluído', cards: [] }
+            ]
+        };
+        boards.boards.push(newBoard);
+        saveUserBoards();
+        renderDashboard();
+        return newBoard;
+    }
+    
+    function deleteBoard(boardId) {
+        if (confirm('Excluir este quadro?')) {
+            boards.boards = boards.boards.filter(b => b.id !== boardId);
+            deleteBoardFromFirebase(boardId);
+            if (currentBoardId === boardId) currentBoardId = null;
+            renderDashboard();
+        }
+    }
+    
+    function getBoard(boardId) { return boards.boards.find(b => b.id === boardId); }
+    
+    async function saveBoard(board) {
+        let index = boards.boards.findIndex(b => b.id === board.id);
+        if (index !== -1) boards.boards[index] = board;
+        await saveUserBoards();
+        renderBoardScreen(board.id);
+    }
+    
+    function addList(boardId, title) { let board = getBoard(boardId); if(board) { board.lists.push({ id: Date.now().toString(), title: title, cards: [] }); saveBoard(board); } }
+    function deleteList(boardId, listId) { if(confirm('Excluir esta lista?')) { let board = getBoard(boardId); if(board) { board.lists = board.lists.filter(l => l.id !== listId); saveBoard(board); } } }
+    function updateListTitle(boardId, listId, newTitle) { let board = getBoard(boardId); if(board) { let list = board.lists.find(l => l.id === listId); if(list) list.title = newTitle; saveBoard(board); } }
+    function addCard(boardId, listId, title, desc) { let board = getBoard(boardId); if(board) { let list = board.lists.find(l => l.id === listId); if(list) { list.cards.push({ id: Date.now().toString(), title: title, description: desc, checklist: [] }); saveBoard(board); } } }
+    function updateCard(boardId, listId, cardId, newTitle, newDesc) { let board = getBoard(boardId); if(board) { let list = board.lists.find(l => l.id === listId); if(list) { let card = list.cards.find(c => c.id === cardId); if(card) { if(newTitle !== undefined) card.title = newTitle; if(newDesc !== undefined) card.description = newDesc; saveBoard(board); } } } }
+    function deleteCard(boardId, listId, cardId) { if(confirm('Excluir este card?')) { let board = getBoard(boardId); if(board) { let list = board.lists.find(l => l.id === listId); if(list) list.cards = list.cards.filter(c => c.id !== cardId); saveBoard(board); } } }
+    function addChecklistItem(boardId, listId, cardId, itemName) { let board = getBoard(boardId); if(board) { let list = board.lists.find(l => l.id === listId); if(list) { let card = list.cards.find(c => c.id === cardId); if(card) { card.checklist.push({ id: Date.now().toString(), name: itemName, completed: false }); saveBoard(board); openCardModal(boardId, listId, cardId); } } } }
+    function toggleChecklistItem(boardId, listId, cardId, itemId) { let board = getBoard(boardId); if(board) { let list = board.lists.find(l => l.id === listId); if(list) { let card = list.cards.find(c => c.id === cardId); if(card) { let item = card.checklist.find(i => i.id === itemId); if(item) item.completed = !item.completed; saveBoard(board); openCardModal(boardId, listId, cardId); } } } }
+    function deleteChecklistItem(boardId, listId, cardId, itemId) { let board = getBoard(boardId); if(board) { let list = board.lists.find(l => l.id === listId); if(list) { let card = list.cards.find(c => c.id === cardId); if(card) { card.checklist = card.checklist.filter(i => i.id !== itemId); saveBoard(board); openCardModal(boardId, listId, cardId); } } } }
+    
+    // Gráfico Neural
+    function drawNeuralNetwork() {
+        const canvas = document.getElementById('neuralCanvas');
+        if(!canvas) return;
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        const ctx = canvas.getContext('2d');
+        const points = [];
+        const numPoints = 12;
+        for(let i = 0; i < numPoints; i++) { points.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height }); }
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for(let i = 0; i < points.length; i++) {
+            for(let j = i+1; j < points.length; j++) {
+                let dist = Math.hypot(points[i].x - points[j].x, points[i].y - points[j].y);
+                if(dist < 150) {
+                    ctx.beginPath();
+                    ctx.moveTo(points[i].x, points[i].y);
+                    ctx.lineTo(points[j].x, points[j].y);
+                    let gradient = ctx.createLinearGradient(points[i].x, points[i].y, points[j].x, points[j].y);
+                    gradient.addColorStop(0, '#FF6D00');
+                    gradient.addColorStop(1, '#E91E63');
+                    ctx.strokeStyle = gradient;
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                }
+            }
+        }
+        points.forEach(p => {
+            ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI * 2); ctx.fillStyle = '#FF6D00'; ctx.fill();
+            ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI * 2); ctx.fillStyle = '#E91E63'; ctx.fill();
+        });
+    }
+
+    function calculateMetrics() {
+        let totalBoards = boards.boards.length;
+        let totalLists = 0;
+        let totalCards = 0;
+        let totalChecklist = 0;
+        let totalCompleted = 0;
+        boards.boards.forEach(board => {
+            totalLists += board.lists.length;
+            board.lists.forEach(list => {
+                totalCards += list.cards.length;
+                list.cards.forEach(card => {
+                    totalChecklist += card.checklist.length;
+                    totalCompleted += card.checklist.filter(i => i.completed).length;
+                });
+            });
+        });
+        let completionRate = totalChecklist > 0 ? (totalCompleted / totalChecklist) * 100 : 0;
+        return { totalBoards, totalLists, totalCards, totalChecklist, totalCompleted, completionRate };
+    }
+    
+    function renderDashboard() {
+        const metrics = calculateMetrics();
+        const app = document.getElementById('app');
+        app.innerHTML = `
+            <div class="container">
+                <div class="header">
+                    <div class="logo"><h1>VORTEX <span>Organização Premium</span></h1></div>
+                    <div><button id="configBtn"><i class="fas fa-cog"></i> Configurações</button><button id="logoutBtn" class="btn-outline"><i class="fas fa-sign-out-alt"></i> Sair</button></div>
+                </div>
+                <div class="neural-bg">
+                    <canvas id="neuralCanvas" class="neural-canvas"></canvas>
+                    <div class="stats-grid">
+                        <div class="stat-card"><i class="fas fa-layer-group"></i><div class="stat-value">${metrics.totalBoards}</div><div class="stat-label">Quadros Criados</div></div>
+                        <div class="stat-card"><i class="fas fa-list"></i><div class="stat-value">${metrics.totalLists}</div><div class="stat-label">Listas Ativas</div></div>
+                        <div class="stat-card"><i class="fas fa-tasks"></i><div class="stat-value">${metrics.totalCards}</div><div class="stat-label">Cards em Andamento</div></div>
+                        <div class="stat-card"><i class="fas fa-check-circle"></i><div class="stat-value">${metrics.completionRate.toFixed(1)}%</div><div class="stat-label">Tarefas Concluídas</div></div>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;"><h2>Meus Quadros</h2><button id="createBoardBtn"><i class="fas fa-plus"></i> Criar Quadro</button></div>
+                <div id="boardsGrid" class="boards-grid"></div>
+            </div>
+            <div id="configModal" class="modal"><div class="modal-content"><button class="close-modal" onclick="closeConfigModal()">&times;</button><h2>⚙️ Configurações</h2>
+                <input type="password" id="oldPass" placeholder="Senha atual"><input type="password" id="newPass" placeholder="Nova senha (min 6)"><input type="password" id="confirmPass" placeholder="Confirmar">
+                <button id="changePassBtn">Alterar Senha</button><hr style="margin:15px 0;"><button id="resetDataBtn" style="background:#ff3b30;">Resetar Todos os Quadros</button>
+                <button id="deleteAccountBtn" style="background:#ff3b30;">Excluir Minha Conta</button></div></div>
+        `;
+        let grid = document.getElementById('boardsGrid');
+        if(!boards.boards || boards.boards.length === 0) { grid.innerHTML = `<div style="text-align:center; padding:60px; color:#888;">Nenhum quadro criado.<br>Clique em "Criar Quadro" para começar</div>`; }
+        else { grid.innerHTML = ''; boards.boards.forEach(board => { let totalCards = board.lists.reduce((acc, l) => acc + l.cards.length, 0); let card = document.createElement('div'); card.className = 'board-card'; card.innerHTML = `<div class="board-icon"><i class="fas fa-columns"></i></div><div class="board-title">${board.name}</div><div class="board-info">${board.lists.length} listas • ${totalCards} cards</div><div class="board-actions"><button class="open-board" data-id="${board.id}">Abrir</button><button class="delete-board" data-id="${board.id}" style="background:#ff3b30;">Excluir</button></div>`; grid.appendChild(card); }); document.querySelectorAll('.open-board').forEach(btn => { btn.onclick = () => renderBoardScreen(btn.dataset.id); }); document.querySelectorAll('.delete-board').forEach(btn => { btn.onclick = () => deleteBoard(btn.dataset.id); }); }
+        document.getElementById('createBoardBtn').onclick = () => { let name = prompt('Nome do quadro:'); if(name) createBoard(name); };
+        document.getElementById('logoutBtn').onclick = () => signOut(auth);
+        document.getElementById('configBtn').onclick = () => document.getElementById('configModal').style.display = 'flex';
+        window.closeConfigModal = () => document.getElementById('configModal').style.display = 'none';
+        document.getElementById('changePassBtn').onclick = async () => { let old = document.getElementById('oldPass').value; let nw = document.getElementById('newPass').value; let cf = document.getElementById('confirmPass').value; if(nw !== cf) { alert('Senhas não conferem'); return; } try { await changePasswordFirebase(old, nw); alert('Senha alterada!'); closeConfigModal(); } catch(e) { alert('Senha atual incorreta'); } };
+        document.getElementById('resetDataBtn').onclick = async () => { if(confirm('APAGAR TODOS OS SEUS QUADROS?')) { for(const board of boards.boards) { await deleteBoardFromFirebase(board.id); } boards = { boards: [] }; renderDashboard(); alert('Dados apagados!'); } };
+        document.getElementById('deleteAccountBtn').onclick = async () => { if(confirm('EXCLUIR SUA CONTA e todos os dados?')) { for(const board of boards.boards) { await deleteBoardFromFirebase(board.id); } await deleteAccountFirebase(); localStorage.removeItem('vortex_session'); currentUser = null; renderLogin(); alert('Conta excluída!'); } };
+        setTimeout(() => { drawNeuralNetwork(); window.addEventListener('resize', () => drawNeuralNetwork()); }, 100);
+    }
+    
+    function renderBoardScreen(boardId) {
+        currentBoardId = boardId;
+        let board = getBoard(boardId);
+        if(!board) { renderDashboard(); return; }
+        const app = document.getElementById('app');
+        app.innerHTML = `<div class="container"><div class="board-header"><div class="board-title-header"><i class="fas fa-columns"></i> ${board.name}</div><div><button id="backToDashboardBtn"><i class="fas fa-arrow-left"></i> Voltar</button></div></div><div id="kanbanBoard" class="kanban-board"></div></div>`;
+        renderKanban(boardId);
+        document.getElementById('backToDashboardBtn').onclick = () => { currentBoardId = null; renderDashboard(); };
+    }
+    
+    function renderKanban(boardId) {
+        let board = getBoard(boardId);
+        if(!board) return;
+        let boardDiv = document.getElementById('kanbanBoard');
+        if(!boardDiv) return;
+        boardDiv.innerHTML = '';
+        let draggedCard = null, draggedFromListId = null, draggedBoardId = null;
+        function handleDragStart(e, bId, lId, cId) { draggedCard = cId; draggedFromListId = lId; draggedBoardId = bId; e.target.classList.add('dragging'); }
+        function handleDragEnd(e) { e.target.classList.remove('dragging'); draggedCard = null; draggedFromListId = null; draggedBoardId = null; }
+        function handleDragOver(e) { e.preventDefault(); }
+        function handleDrop(e, bId, targetListId) { e.preventDefault(); if(draggedCard && draggedFromListId && targetListId !== draggedFromListId && draggedBoardId === bId) { let b = getBoard(bId); if(b) { let from = b.lists.find(l => l.id === draggedFromListId); let to = b.lists.find(l => l.id === targetListId); if(from && to) { let idx = from.cards.findIndex(c => c.id === draggedCard); if(idx !== -1) { let card = from.cards[idx]; from.cards.splice(idx, 1); to.cards.push(card); saveBoard(b); } } } } draggedCard = null; draggedFromListId = null; draggedBoardId = null; }
+        
+        board.lists.forEach(list => {
+            let listDiv = document.createElement('div'); listDiv.className = 'list'; listDiv.setAttribute('data-list-id', list.id); listDiv.addEventListener('dragover', handleDragOver); listDiv.addEventListener('drop', (e) => handleDrop(e, boardId, list.id));
+            let header = document.createElement('div'); header.className = 'list-header'; header.innerHTML = `<div class="list-title"><input type="text" value="${list.title.replace(/"/g, '&quot;')}" data-id="${list.id}" class="list-title-input"></div><button class="delete-list" data-id="${list.id}"><i class="fas fa-trash"></i></button>`;
+            listDiv.appendChild(header);
+            let cardsContainer = document.createElement('div'); cardsContainer.className = 'cards-container';
+            list.cards.forEach(card => {
+                let cardDiv = document.createElement('div'); cardDiv.className = 'card'; cardDiv.setAttribute('draggable', 'true'); cardDiv.setAttribute('data-card-id', card.id); cardDiv.setAttribute('data-list-id', list.id); cardDiv.addEventListener('dragstart', (e) => handleDragStart(e, boardId, list.id, card.id)); cardDiv.addEventListener('dragend', handleDragEnd);
+                let pending = card.checklist.filter(i => !i.completed).length; let total = card.checklist.length;
+                cardDiv.innerHTML = `<div class="card-title" data-list="${list.id}" data-card="${card.id}">${card.title}</div><div class="card-footer">${total > 0 ? `<span><i class="fas fa-check-square"></i> ${pending}/${total}</span>` : ''}<span><i class="fas fa-edit"></i> Clique para editar</span></div>`;
+                cardsContainer.appendChild(cardDiv);
+            });
+            let addCardBtn = document.createElement('button'); addCardBtn.className = 'add-card'; addCardBtn.innerHTML = '+ Adicionar card'; addCardBtn.onclick = () => { let title = prompt('Título:'); if(title) addCard(boardId, list.id, title, ''); };
+            cardsContainer.appendChild(addCardBtn);
+            listDiv.appendChild(cardsContainer);
+            boardDiv.appendChild(listDiv);
+        });
+        let addListBtn = document.createElement('div'); addListBtn.className = 'add-list'; addListBtn.innerHTML = '<i class="fas fa-plus"></i> Adicionar lista'; addListBtn.onclick = () => { let title = prompt('Nome da lista:'); if(title) addList(boardId, title); };
+        boardDiv.appendChild(addListBtn);
+        
+        document.querySelectorAll('.list-title-input').forEach(inp => { inp.onchange = (e) => updateListTitle(boardId, inp.dataset.id, inp.value); });
+        document.querySelectorAll('.delete-list').forEach(btn => { btn.onclick = () => deleteList(boardId, btn.dataset.id); });
+        document.querySelectorAll('.card-title').forEach(card => { card.onclick = (e) => { e.stopPropagation(); let listId = card.dataset.list; let cardId = card.dataset.card; openCardModal(boardId, listId, cardId); }; });
+    }
+    
+    function openCardModal(boardId, listId, cardId) {
+        let board = getBoard(boardId); if(!board) return; let list = board.lists.find(l => l.id === listId); if(!list) return; let card = list.cards.find(c => c.id === cardId); if(!card) return;
+        let checklistHtml = '';
+        card.checklist.forEach(item => { checklistHtml += `<div class="checklist-item ${item.completed ? 'completed' : ''}"><input type="checkbox" ${item.completed ? 'checked' : ''} onchange="window.toggleChecklistItem('${boardId}', '${listId}', '${cardId}', '${item.id}')"><span>${item.name}</span><button onclick="window.deleteChecklistItem('${boardId}', '${listId}', '${cardId}', '${item.id}')" style="background:none; border:none; color:#ff3b30;"><i class="fas fa-trash"></i></button></div>`; });
+        let modalHtml = `<div id="cardModal" class="modal" style="display:flex;"><div class="modal-content"><button class="close-modal" onclick="closeModal()">&times;</button><h2><input type="text" id="modalCardTitle" value="${card.title.replace(/"/g, '&quot;')}" style="font-size:1.3rem; font-weight:bold;"></h2><textarea id="modalCardDesc" rows="3" placeholder="Descrição...">${card.description || ''}</textarea><h3 style="margin:15px 0 10px;">✅ Checklist</h3><div id="modalChecklist">${checklistHtml}</div><div style="display:flex; gap:10px; margin:10px 0;"><input type="text" id="newChecklistItem" placeholder="Novo item" style="flex:1;"><button onclick="window.addChecklistItemFromModal('${boardId}', '${listId}', '${cardId}')">Adicionar</button></div><div style="display:flex; gap:10px; margin-top:20px;"><button onclick="window.saveCardFromModal('${boardId}', '${listId}', '${cardId}')" class="btn-outline" style="flex:1;">Salvar</button><button onclick="window.deleteCardFromModal('${boardId}', '${listId}', '${cardId}')" style="background:#ff3b30; flex:1;">Excluir Card</button></div></div></div>`;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        window.closeModal = () => { document.getElementById('cardModal')?.remove(); };
+        window.saveCardFromModal = (bId, lId, cId) => { let newTitle = document.getElementById('modalCardTitle').value; let newDesc = document.getElementById('modalCardDesc').value; updateCard(bId, lId, cId, newTitle, newDesc); closeModal(); renderBoardScreen(bId); };
+        window.deleteCardFromModal = (bId, lId, cId) => { if(confirm('Excluir este card?')) { deleteCard(bId, lId, cId); closeModal(); renderBoardScreen(bId); } };
+        window.addChecklistItemFromModal = (bId, lId, cId) => { let newItem = document.getElementById('newChecklistItem')?.value; if(newItem) { addChecklistItem(bId, lId, cId, newItem); closeModal(); renderBoardScreen(bId); } };
+    }
+    window.toggleChecklistItem = toggleChecklistItem;
+    window.deleteChecklistItem = deleteChecklistItem;
+    
     function renderLogin() {
-        document.getElementById('app').innerHTML = `<div class="login-container"><div class="login-card"><h1>🎯 ActionBoard</h1><p>Seus planos de ação</p><div id="authForm"></div></div></div>`;
+        document.getElementById('app').innerHTML = `<div class="login-container"><div class="login-card"><h1 style="background:linear-gradient(135deg,#FF6D00,#E91E63); -webkit-background-clip:text; background-clip:text; color:transparent;">VORTEX</h1><p style="margin:8px 0 20px;">Organização Premium</p><div id="authForm"></div></div></div>`;
         let isLogin = true;
-        const showLogin = () => {
-            isLogin = true;
-            document.getElementById('authForm').innerHTML = `<input type="email" id="loginEmail" placeholder="E-mail"><input type="password" id="loginSenha" placeholder="Senha"><button id="loginBtn">Entrar</button><div class="switch-auth" id="switchToReg">Não tem conta? Criar Conta</div>`;
-            document.getElementById('loginBtn').onclick = async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('loginEmail').value, document.getElementById('loginSenha').value); } catch(e) { alert('Erro: ' + e.message); } };
-            document.getElementById('switchToReg').onclick = showReg;
-        };
-        const showReg = () => {
-            isLogin = false;
-            document.getElementById('authForm').innerHTML = `<input type="email" id="regEmail" placeholder="E-mail"><input type="password" id="regSenha" placeholder="Senha (6+)"><button id="regBtn">Criar Conta</button><div class="switch-auth" id="switchToLogin">Já tem conta? Fazer Login</div>`;
-            document.getElementById('regBtn').onclick = async () => { try { await createUserWithEmailAndPassword(auth, document.getElementById('regEmail').value, document.getElementById('regSenha').value); alert('Cadastro realizado! Faça login.'); showLogin(); } catch(e) { alert('Erro: ' + e.message); } };
-            document.getElementById('switchToLogin').onclick = showLogin;
-        };
+        const showLogin = () => { isLogin = true; document.getElementById('authForm').innerHTML = `<input type="email" id="loginEmail" placeholder="E-mail"><input type="password" id="loginSenha" placeholder="Senha"><button id="loginBtn">Entrar</button><div class="switch-auth" id="switchToReg">Não tem conta? Criar Conta</div>`; document.getElementById('loginBtn').onclick = () => { signInWithEmailAndPassword(auth, document.getElementById('loginEmail').value, document.getElementById('loginSenha').value).catch(e => alert('Erro: ' + e.message)); }; document.getElementById('switchToReg').onclick = showReg; };
+        const showReg = () => { isLogin = false; document.getElementById('authForm').innerHTML = `<input type="email" id="regEmail" placeholder="E-mail"><input type="password" id="regSenha" placeholder="Senha (6+)"><button id="regBtn">Criar Conta</button><div class="switch-auth" id="switchToLogin">Já tem conta? Fazer Login</div>`; document.getElementById('regBtn').onclick = () => { createUserWithEmailAndPassword(auth, document.getElementById('regEmail').value, document.getElementById('regSenha').value).then(() => { alert('Cadastro realizado! Faça login.'); showLogin(); }).catch(e => alert('Erro: ' + e.message)); }; document.getElementById('switchToLogin').onclick = showLogin; };
         showLogin();
     }
     
     onAuthStateChanged(auth, async (user) => {
-        if (user) { currentUser = user; await loadPlansFromFirebase(); }
-        else { renderLogin(); }
+        if (user) {
+            currentUser = user;
+            await loadUserBoards();
+        } else {
+            renderLogin();
+        }
     });
 </script>
 </body>
