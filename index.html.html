@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ActionBoard - Planos de Ação</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #0a0a2e;
+            color: white;
+            min-height: 100vh;
+            padding: 15px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #12123a;
+            padding: 12px 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 1px solid gold;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        h1 { color: gold; font-size: 1.3rem; }
+        button {
+            background: #FF6D00;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+        .btn-outline { background: transparent; border: 1px solid gold; color: gold; }
+        .btn-danger { background: transparent; border: 1px solid #ff3b30; color: #ff3b30; }
+        .stats { display: flex; gap: 12px; margin-bottom: 15px; flex-wrap: wrap; }
+        .stat { background: #12123a; padding: 6px 16px; border-radius: 15px; border: 1px solid #333; font-size: 0.85rem; }
+        .plans-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; margin-top: 20px; }
+        .plan-card { background: #12123a; border-radius: 15px; padding: 15px; border: 1px solid #333; cursor: pointer; transition: 0.2s; }
+        .plan-card:hover { border-color: gold; }
+        .plan-card.completed { border-color: #4CAF50; }
+        .plan-icon { font-size: 2rem; margin-bottom: 8px; }
+        .plan-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 5px; }
+        .plan-date { font-size: 0.65rem; color: #aaa; margin-bottom: 8px; }
+        .progress-bar { height: 5px; background: #333; border-radius: 4px; margin: 10px 0; overflow: hidden; }
+        .progress-fill { height: 100%; background: #FF6D00; border-radius: 4px; }
+        .plan-card.completed .progress-fill { background: #4CAF50; }
+        .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 10px; border-top: 1px solid #333; flex-wrap: wrap; gap: 8px; }
+        .status { font-size: 0.65rem; padding: 3px 8px; border-radius: 12px; }
+        .status-active { background: #4CAF5033; color: #4CAF50; }
+        .status-completed { background: #4CAF5033; color: #4CAF50; }
+        .btn-small { padding: 4px 10px; font-size: 0.7rem; }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: #12123a; padding: 20px; border-radius: 20px; width: 90%; max-width: 500px; max-height: 85vh; overflow-y: auto; border: 1px solid gold; }
+        .modal-content h2 { color: gold; margin-bottom: 15px; font-size: 1.2rem; }
+        input, textarea { width: 100%; padding: 8px; margin: 6px 0; background: #0a0a2e; border: 1px solid #333; border-radius: 10px; color: white; }
+        .icon-selector { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; padding: 10px; background: #0a0a2e; border-radius: 12px; }
+        .icon-option { width: 45px; height: 45px; background: #1a1a4e; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid transparent; font-size: 1.3rem; }
+        .icon-option.selected { border-color: gold; background: #FFD70020; }
+        .task-item { background: #0a0a2e; padding: 8px; margin: 5px 0; border-radius: 8px; display: flex; align-items: center; gap: 8px; }
+        .task-item input { width: 18px; margin: 0; }
+        .task-item span { flex: 1; font-size: 0.85rem; }
+        .add-btn { background: none; border: 1px dashed #666; padding: 8px; width: 100%; cursor: pointer; color: #aaa; margin-top: 8px; border-radius: 8px; }
+        .delete-btn { background: none; border: none; color: #ff3b30; cursor: pointer; }
+        .empty { text-align: center; padding: 40px; color: #888; }
+        
+        .login-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .login-card { background: #12123a; padding: 30px; border-radius: 25px; width: 320px; text-align: center; border: 1px solid gold; }
+        .login-card input { width: 100%; padding: 10px; margin: 8px 0; border-radius: 25px; }
+        .login-card button { width: 100%; margin-top: 10px; }
+        .switch-auth { margin-top: 12px; color: gold; cursor: pointer; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+<div id="app"></div>
+
+<script type="module">
+    // ========== FIREBASE CONFIG (SUAS CONFIGURAÇÕES) ==========
+    const firebaseConfig = {
+        apiKey: "AIzaSyC5dp5_7mEuwHFnZEGCohDBm2K2ayhtl9k",
+        authDomain: "actionboard-app-d34e9.firebaseapp.com",
+        projectId: "actionboard-app-d34e9",
+        storageBucket: "actionboard-app-d34e9.firebasestorage.app",
+        messagingSenderId: "851859475972",
+        appId: "1:851859475972:web:88b9869f0dbdd162d16f51"
+    };
+    // ===========================================================
+    
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    import { getFirestore, collection, doc, getDocs, setDoc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+    
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    
+    let currentUser = null;
+    let plans = [];
+    const iconsList = ["🎯", "📚", "💼", "🏋️", "💰", "🚗", "🏠", "❤️", "✈️", "🎓", "🐕", "🎨", "🍳", "🎵", "📷", "🌱", "💪", "🧘", "🏃", "🚴"];
+    
+    async function loadPlansFromFirebase() {
+        if (!currentUser) return;
+        try {
+            const q = query(collection(db, "planos"), where("userId", "==", currentUser.uid));
+            const querySnapshot = await getDocs(q);
+            plans = [];
+            querySnapshot.forEach((doc) => { plans.push({ id: doc.id, ...doc.data() }); });
+            renderApp();
+        } catch (error) { console.error("Erro:", error); }
+    }
+    
+    async function savePlanToFirebase(plan) {
+        if (!currentUser) return;
+        try {
+            const planRef = doc(db, "planos", plan.id);
+            await setDoc(planRef, { userId: currentUser.uid, name: plan.name, description: plan.description, endDate: plan.endDate, icon: plan.icon, steps: plan.steps, completed: plan.completed });
+        } catch (error) { console.error("Erro:", error); }
+    }
+    
+    async function deletePlanFromFirebase(planId) {
+        if (!currentUser) return;
+        try { await deleteDoc(doc(db, "planos", planId)); } catch (error) { console.error("Erro:", error); }
+    }
+    
+    async function addPlan(plan) { plan.id = Date.now().toString(); plans.push(plan); await savePlanToFirebase(plan); renderApp(); }
+    async function updatePlan(plan) { const index = plans.findIndex(p => p.id === plan.id); if (index !== -1) plans[index] = plan; await savePlanToFirebase(plan); renderApp(); }
+    async function deletePlan(id) { if (confirm('Excluir este plano?')) { plans = plans.filter(p => p.id !== id); await deletePlanFromFirebase(id); renderApp(); } }
+    async function toggleComplete(id) { const p = plans.find(p => p.id === id); if (p) { p.completed = !p.completed; await savePlanToFirebase(p); renderApp(); } }
+    
+    function getProgress(p) {
+        if (p.completed) return 100;
+        let total = 0, done = 0;
+        if (p.steps) { p.steps.forEach(s => { if (s.tasks) { s.tasks.forEach(t => { total++; if (t.completed) done++; }); } }); }
+        return total === 0 ? 0 : (done / total) * 100;
+    }
+    
+    function renderApp() {
+        let completedCount = plans.filter(p => p.completed).length;
+        document.getElementById('app').innerHTML = `
+            <div class="container">
+                <div class="header"><h1>🎯 ActionBoard</h1><div><button id="newPlanBtn">+ Novo Plano</button><button id="configBtn" class="btn-outline">⚙️</button><button id="logoutBtn" class="btn-outline">Sair</button></div></div>
+                <div class="stats"><div class="stat">📋 ${plans.length} Planos</div><div class="stat">✅ ${completedCount} Concluídos</div></div>
+                <div id="plansGrid" class="plans-grid"></div>
+            </div>
+            <div id="planModal" class="modal"><div class="modal-content"><h2>📌 Novo Plano</h2>
+                <input type="text" id="planName" placeholder="Nome do plano"><textarea id="planDesc" rows="2" placeholder="Descrição"></textarea>
+                <input type="date" id="planEndDate"><label>Escolha um ícone:</label><div class="icon-selector" id="iconSelector"></div><input type="hidden" id="selectedIcon" value="🎯">
+                <div id="stepsEditor"></div><button id="addStepBtn" class="add-btn">+ Adicionar Etapa</button>
+                <div style="display:flex; gap:10px; margin-top:15px;"><button id="savePlanBtn">Salvar</button><button id="closeModalBtn" class="btn-outline">Cancelar</button></div>
+            </div></div>
+            <div id="detailModal" class="modal"><div class="modal-content"><div id="detailContent"></div><button id="closeDetailBtn" class="btn-outline">Fechar</button></div></div>
+            <div id="configModal" class="modal"><div class="modal-content"><h2>⚙️ Configurações</h2>
+                <input type="password" id="oldPass" placeholder="Senha atual"><input type="password" id="newPass" placeholder="Nova senha (6+)">
+                <input type="password" id="confirmPass" placeholder="Confirmar"><button id="changePassBtn">Alterar Senha</button>
+                <button id="resetBtn" style="background:#ff3b30;">Resetar Planos</button>
+                <button id="deleteAccBtn" style="background:transparent; border:1px solid #ff3b30; color:#ff3b30;">Excluir Conta</button>
+                <button id="closeConfigBtn" class="btn-outline">Fechar</button>
+            </div></div>
+        `;
+        
+        let selector = document.getElementById('iconSelector');
+        if (selector) {
+            selector.innerHTML = '';
+            iconsList.forEach(ic => {
+                let div = document.createElement('div');
+                div.className = `icon-option ${ic === '🎯' ? 'selected' : ''}`;
+                div.innerHTML = ic;
+                div.onclick = () => { document.querySelectorAll('.icon-option').forEach(el => el.classList.remove('selected')); div.classList.add('selected'); document.getElementById('selectedIcon').value = ic; };
+                selector.appendChild(div);
+            });
+        }
+        
+        let grid = document.getElementById('plansGrid');
+        if (plans.length === 0) { grid.innerHTML = '<div class="empty">📭 Nenhum plano criado</div>'; }
+        else {
+            grid.innerHTML = '';
+            plans.forEach(p => {
+                let prog = getProgress(p);
+                let icon = p.icon || '🎯';
+                let card = document.createElement('div');
+                card.className = `plan-card ${p.completed ? 'completed' : ''}`;
+                card.innerHTML = `<div class="plan-icon">${icon}</div><div class="plan-title">${p.name} ${p.completed ? '✅' : ''}</div>
+                    <div class="plan-date">📅 ${new Date(p.endDate).toLocaleDateString()}</div><div class="progress-bar"><div class="progress-fill" style="width:${prog}%"></div></div>
+                    <div>${Math.round(prog)}%</div><div class="card-footer"><span class="status status-${p.completed ? 'completed' : 'active'}">${p.completed ? 'Concluído' : 'Em andamento'}</span>
+                    <div style="display: flex; gap: 5px;">${!p.completed ? `<button class="btn-small" id="complete_${p.id}">✓ Concluir</button>` : ''}
+                    <button class="btn-small" id="detail_${p.id}">Detalhes</button><button class="btn-small btn-danger" id="delete_${p.id}">🗑️ Excluir</button></div></div>`;
+                grid.appendChild(card);
+                if (!p.completed) document.getElementById(`complete_${p.id}`)?.addEventListener('click', () => toggleComplete(p.id));
+                document.getElementById(`detail_${p.id}`)?.addEventListener('click', () => openDetail(p.id));
+                document.getElementById(`delete_${p.id}`)?.addEventListener('click', (e) => { e.stopPropagation(); deletePlan(p.id); });
+            });
+        }
+        
+        let currentSteps = [];
+        function renderStepsEditor() {
+            let div = document.getElementById('stepsEditor');
+            if (!div) return;
+            div.innerHTML = '';
+            currentSteps.forEach((s, i) => {
+                div.innerHTML += `<div style="display:flex; gap:5px; margin-bottom:5px;"><input type="text" value="${s.name.replace(/"/g, '&quot;')}" data-i="${i}" class="stepName" style="flex:1;" placeholder="Etapa"><button data-i="${i}" class="delStepBtn" style="background:#ff3b30; padding:6px 10px;">X</button></div>`;
+            });
+            document.querySelectorAll('.stepName').forEach(inp => { inp.onchange = (e) => { currentSteps[parseInt(e.target.dataset.i)].name = e.target.value; }; });
+            document.querySelectorAll('.delStepBtn').forEach(btn => { btn.onclick = () => { currentSteps.splice(parseInt(btn.dataset.i), 1); renderStepsEditor(); }; });
+        }
+        
+        let editingId = null;
+        document.getElementById('newPlanBtn').onclick = () => {
+            editingId = null;
+            document.getElementById('planName').value = '';
+            document.getElementById('planDesc').value = '';
+            document.getElementById('planEndDate').value = '';
+            document.getElementById('selectedIcon').value = '🎯';
+            document.querySelectorAll('.icon-option').forEach(el => el.classList.remove('selected'));
+            document.querySelector('.icon-option')?.classList.add('selected');
+            currentSteps = [];
+            renderStepsEditor();
+            document.getElementById('planModal').style.display = 'flex';
+        };
+        document.getElementById('closeModalBtn').onclick = () => document.getElementById('planModal').style.display = 'none';
+        document.getElementById('addStepBtn').onclick = () => { currentSteps.push({ name: 'Nova etapa', tasks: [] }); renderStepsEditor(); };
+        document.getElementById('savePlanBtn').onclick = async () => {
+            let name = document.getElementById('planName').value;
+            if (!name) { alert('Digite o nome do plano'); return; }
+            let endDate = document.getElementById('planEndDate').value;
+            if (!endDate) { alert('Selecione a data de término'); return; }
+            let icon = document.getElementById('selectedIcon').value;
+            if (editingId) {
+                let p = plans.find(pl => pl.id === editingId);
+                if (p) { p.name = name; p.description = document.getElementById('planDesc').value; p.endDate = endDate; p.icon = icon; p.steps = currentSteps; await updatePlan(p); }
+            } else { await addPlan({ id: Date.now().toString(), name: name, description: document.getElementById('planDesc').value, endDate: endDate, icon: icon, steps: currentSteps, completed: false }); }
+            document.getElementById('planModal').style.display = 'none';
+        };
+        
+        async function openDetail(id) {
+            let p = plans.find(pl => pl.id === id);
+            if (!p) return;
+            let prog = getProgress(p);
+            let html = `<div style="display:flex; gap:10px; align-items:center;"><div style="font-size:2rem;">${p.icon || '🎯'}</div><h2>${p.name}</h2></div>
+                <p>${p.description || ''}</p><p>📅 ${new Date(p.endDate).toLocaleDateString()}</p>
+                <div class="progress-bar"><div class="progress-fill" style="width:${prog}%"></div></div><h3>📋 Etapas e Tarefas</h3>`;
+            if (p.steps && p.steps.length) {
+                p.steps.forEach((step, si) => {
+                    html += `<div style="margin-bottom:15px; background:#0a0a2e; border-radius:10px; padding:10px;">
+                        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;"><input type="checkbox" ${step.completed ? 'checked' : ''} onchange="toggleStep(${id}, ${si})"><strong style="flex:1">${step.name}</strong>
+                        <button onclick="deleteStep(${id}, ${si})" style="background:#ff3b30; border:none; color:white; padding:4px 8px;">Excluir</button></div>`;
+                    if (step.tasks && step.tasks.length) {
+                        step.tasks.forEach((task, ti) => {
+                            html += `<div style="display:flex; align-items:center; gap:8px; margin-left:20px; padding:4px 0;"><input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask(${id}, ${si}, ${ti})"><span style="flex:1">${task.name}</span><button onclick="deleteTask(${id}, ${si}, ${ti})" style="background:none; border:none; color:#ff3b30;">X</button></div>`;
+                        });
+                    }
+                    html += `<button class="add-btn" onclick="addTaskTo(${id}, ${si})">+ Adicionar tarefa</button></div>`;
+                });
+            }
+            html += `<button class="add-btn" onclick="addStepTo(${id})">+ Adicionar etapa</button>`;
+            if (!p.completed) html += `<button id="completeFromDetail" style="margin-top:15px;">✓ Marcar plano como concluído</button>`;
+            document.getElementById('detailContent').innerHTML = html;
+            document.getElementById('detailModal').style.display = 'flex';
+            document.getElementById('completeFromDetail')?.addEventListener('click', () => { toggleComplete(id); document.getElementById('detailModal').style.display = 'none'; });
+        }
+        
+        window.toggleStep = async (pid, si) => { let p = plans.find(pl => pl.id === pid); if (p) { p.steps[si].completed = !p.steps[si].completed; await updatePlan(p); openDetail(pid); } };
+        window.toggleTask = async (pid, si, ti) => { let p = plans.find(pl => pl.id === pid); if (p) { p.steps[si].tasks[ti].completed = !p.steps[si].tasks[ti].completed; await updatePlan(p); openDetail(pid); } };
+        window.addStepTo = async (pid) => { let name = prompt('Nome da etapa:'); if (name) { let p = plans.find(pl => pl.id === pid); if (p) { if (!p.steps) p.steps = []; p.steps.push({ name: name, tasks: [], completed: false }); await updatePlan(p); openDetail(pid); } } };
+        window.deleteStep = async (pid, si) => { if (confirm('Excluir esta etapa?')) { let p = plans.find(pl => pl.id === pid); if (p) { p.steps.splice(si, 1); await updatePlan(p); openDetail(pid); } } };
+        window.deleteTask = async (pid, si, ti) => { if (confirm('Excluir esta tarefa?')) { let p = plans.find(pl => pl.id === pid); if (p) { p.steps[si].tasks.splice(ti, 1); await updatePlan(p); openDetail(pid); } } };
+        window.addTaskTo = async (pid, si) => { let name = prompt('Nome da tarefa:'); if (name) { let p = plans.find(pl => pl.id === pid); if (p) { if (!p.steps[si].tasks) p.steps[si].tasks = []; p.steps[si].tasks.push({ name: name, completed: false }); await updatePlan(p); openDetail(pid); } } };
+        
+        document.getElementById('closeDetailBtn').onclick = () => document.getElementById('detailModal').style.display = 'none';
+        document.getElementById('configBtn').onclick = () => document.getElementById('configModal').style.display = 'flex';
+        document.getElementById('closeConfigBtn').onclick = () => document.getElementById('configModal').style.display = 'none';
+        document.getElementById('logoutBtn').onclick = () => signOut(auth);
+        document.getElementById('changePassBtn').onclick = async () => {
+            let old = document.getElementById('oldPass').value;
+            let nw = document.getElementById('newPass').value;
+            let cf = document.getElementById('confirmPass').value;
+            if (nw !== cf) { alert('Senhas não conferem'); return; }
+            const user = auth.currentUser;
+            const credential = EmailAuthProvider.credential(user.email, old);
+            try { await reauthenticateWithCredential(user, credential); await updatePassword(user, nw); alert('Senha alterada!'); document.getElementById('configModal').style.display = 'none'; } catch(e) { alert('Senha atual incorreta'); }
+        };
+        document.getElementById('resetBtn').onclick = async () => { if (confirm('Apagar TODOS os planos?')) { for (const p of plans) await deletePlanFromFirebase(p.id); plans = []; renderApp(); alert('Planos apagados!'); } };
+        document.getElementById('deleteAccBtn').onclick = async () => { if (confirm('Excluir sua conta e todos os planos?')) { for (const p of plans) await deletePlanFromFirebase(p.id); await auth.currentUser.delete(); alert('Conta excluída!'); window.location.reload(); } };
+    }
+    
+    function renderLogin() {
+        document.getElementById('app').innerHTML = `<div class="login-container"><div class="login-card"><h1>🎯 ActionBoard</h1><p>Seus planos de ação</p><div id="authForm"></div></div></div>`;
+        let isLogin = true;
+        const showLogin = () => {
+            isLogin = true;
+            document.getElementById('authForm').innerHTML = `<input type="email" id="loginEmail" placeholder="E-mail"><input type="password" id="loginSenha" placeholder="Senha"><button id="loginBtn">Entrar</button><div class="switch-auth" id="switchToReg">Não tem conta? Criar Conta</div>`;
+            document.getElementById('loginBtn').onclick = async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('loginEmail').value, document.getElementById('loginSenha').value); } catch(e) { alert('Erro: ' + e.message); } };
+            document.getElementById('switchToReg').onclick = showReg;
+        };
+        const showReg = () => {
+            isLogin = false;
+            document.getElementById('authForm').innerHTML = `<input type="email" id="regEmail" placeholder="E-mail"><input type="password" id="regSenha" placeholder="Senha (6+)"><button id="regBtn">Criar Conta</button><div class="switch-auth" id="switchToLogin">Já tem conta? Fazer Login</div>`;
+            document.getElementById('regBtn').onclick = async () => { try { await createUserWithEmailAndPassword(auth, document.getElementById('regEmail').value, document.getElementById('regSenha').value); alert('Cadastro realizado! Faça login.'); showLogin(); } catch(e) { alert('Erro: ' + e.message); } };
+            document.getElementById('switchToLogin').onclick = showLogin;
+        };
+        showLogin();
+    }
+    
+    onAuthStateChanged(auth, async (user) => {
+        if (user) { currentUser = user; await loadPlansFromFirebase(); }
+        else { renderLogin(); }
+    });
+</script>
+</body>
+</html>
